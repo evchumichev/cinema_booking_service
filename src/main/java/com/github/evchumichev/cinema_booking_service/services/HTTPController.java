@@ -33,12 +33,12 @@ public class HTTPController {
 
         post("/api/booking", (request, response) -> {
             int showID = Integer.parseInt(request.queryParams("showID"));
-            String[] seatIDStringArray = request.queryParamsValues("seatID");
-            Integer[] seatID = new Integer[seatIDStringArray.length];
-            for (int i = 0; i < seatID.length; i++) {
-                seatID[i] = Integer.parseInt(seatIDStringArray[i]);
+            String[] seatIDStringArray = request.queryParams("seatID").split(",");
+            Integer[] seatIDIntegerArray = new Integer[seatIDStringArray.length];
+            for (int i = 0; i < seatIDIntegerArray.length; i++) {
+                seatIDIntegerArray[i] = Integer.parseInt(seatIDStringArray[i]);
             }
-            List<Object> responseList = cinemaService.bookTheSeats(showID, seatID);
+            List<Object> responseList = cinemaService.bookTheSeats(showID, seatIDIntegerArray);
             return jsonSerializer.toJSON(responseList);
         });
     }
