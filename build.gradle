@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.evchumichev.cinema_booking_service'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.sparkjava:spark-core:2.8.0'
+    testImplementation 'io.rest-assured:rest-assured:4.1.2'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.2.0'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
+    compile group: 'org.flywaydb', name: 'flyway-core', version: '6.0.6'
+    compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
+}
