@@ -1,0 +1,1 @@
+create unique index  unique_seatID_showID on tickets (seat_id, show_id);

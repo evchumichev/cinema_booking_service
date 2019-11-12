@@ -13,12 +13,12 @@ public class JSONSerializer {
     }
 
     public String toJSON(List<Object> objects) {
-        String request = null;
+        String response = null;
         try {
-            request = objectMapper.writeValueAsString(objects);
+            response = objectMapper.writeValueAsString(objects);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return request;
+        return response;
     }
 }
