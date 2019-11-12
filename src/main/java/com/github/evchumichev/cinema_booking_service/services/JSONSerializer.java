@@ -1,7 +1,24 @@
 package com.github.evchumichev.cinema_booking_service.services;
 
- public class JSONSerializer {
-     public JSONSerializer() {
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-     }
- }
+import java.util.List;
+
+public class JSONSerializer {
+    private ObjectMapper objectMapper;
+
+    public JSONSerializer() {
+        objectMapper = new ObjectMapper();
+    }
+
+    public String toJSON(List<Object> objects) {
+        String request = null;
+        try {
+            request = objectMapper.writeValueAsString(objects);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return request;
+    }
+}

@@ -13,9 +13,11 @@ repositories {
 
 dependencies {
     compile 'com.sparkjava:spark-core:2.8.0'
+    compile group: 'org.flywaydb', name: 'flyway-core', version: '6.0.6'
+    compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.0'
     testImplementation 'io.rest-assured:rest-assured:4.1.2'
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.2.0'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
-    compile group: 'org.flywaydb', name: 'flyway-core', version: '6.0.6'
-    compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
 }
