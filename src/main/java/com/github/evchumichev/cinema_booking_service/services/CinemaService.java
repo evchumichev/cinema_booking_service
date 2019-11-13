@@ -5,17 +5,22 @@ import com.github.evchumichev.cinema_booking_service.domains.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 class CinemaService {
-    private static final String URL = "jdbc:postgresql://localhost:5432/cinema_booking_service";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "postgres";
+    private String url;
+    private String user;
+    private String password;
+
+    CinemaService() {
+        loadProperties();
+    }
 
     public List<Object> getCinemaList() {
         List<Object> cinemaList = new ArrayList<>();
         final String query = "select *\n" +
                 "from cinema";
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
             try (PreparedStatement statement = connection.prepareCall(query)) {
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
@@ -31,11 +36,11 @@ class CinemaService {
     public List<Object> getShowList(int cinemaID) {
         List<Object> showList = new ArrayList<>();
         final String query = "select sh.id, m.title, sh.start_time\n" +
-                "from show sh\n"+
+                "from show sh\n" +
                 "join cinema_hall ch on ch.id = sh.cinema_hall_id\n" +
                 "join movie m on m.id = sh.movie_id\n" +
                 "where ch.cinema_id = ?";
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
             try (PreparedStatement statement = connection.prepareCall(query)) {
                 statement.setInt(1, cinemaID);
                 ResultSet resultSet = statement.executeQuery();
@@ -57,7 +62,7 @@ class CinemaService {
                 "join show sh on sh.cinema_hall_id = s.cinema_hall_id\n" +
                 "where sh.cinema_hall_id = ?\n" +
                 "order by s.row, s.number";
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
             try (PreparedStatement statement = connection.prepareCall(query)) {
                 statement.setInt(1, showID);
                 ResultSet resultSet = statement.executeQuery();
@@ -92,7 +97,7 @@ class CinemaService {
                 "                        join cinema c on c.id = ch.cinema_id \n" +
                 "                        join seat s on s.id = t.seat_id \n" +
                 "                where b.id = ?";
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
             try (PreparedStatement statement = connection.prepareCall(firstQuery)) {
                 statement.setInt(1, showID);
                 statement.setArray(2, connection.createArrayOf("integer", seatID));
@@ -104,7 +109,7 @@ class CinemaService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
             try (PreparedStatement statement = connection.prepareCall(secondQuery)) {
                 statement.setInt(1, bookingID);
                 ResultSet resultSet = statement.executeQuery();
@@ -120,4 +125,12 @@ class CinemaService {
         }
         return tickets;
     }
+
+    private void loadProperties() {
+        Properties properties = new PropertiesLoader().loadFromFIle("database.properties");
+        this.url = properties.getProperty("url");
+        this.user = properties.getProperty("user");
+        this.password = properties.getProperty("password");
+    }
+
 }
