@@ -42,4 +42,8 @@ public class HTTPController {
             return jsonSerializer.toJSON(responseList);
         });
     }
+
+    public void stop() {
+        Thread.currentThread().interrupt();
+    }
 }
