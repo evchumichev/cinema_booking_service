@@ -3,6 +3,8 @@ package com.github.evchumichev.cinema_booking_service.domains;
 import java.sql.Timestamp;
 
 public class Ticket {
+    private int ticketID;
+    private int bookingID;
     private String movieTitle;
     private String cinemaName;
     private String cinemaHallNumber;
@@ -10,8 +12,6 @@ public class Ticket {
     private String seatNumber;
     private Timestamp showStart;
     private Timestamp showEnd;
-    private int ticketNumber;
-    private int bookingNumber;
 
     public Ticket(String movieTitle, String cinemaName, String cinemaHallNumber, String seatRow, String seatNumber, Timestamp showStart, Timestamp showEnd, int ticketNumber, int bookingNumber) {
         this.movieTitle = movieTitle;
@@ -21,8 +21,8 @@ public class Ticket {
         this.seatNumber = seatNumber;
         this.showStart = showStart;
         this.showEnd = showEnd;
-        this.ticketNumber = ticketNumber;
-        this.bookingNumber = bookingNumber;
+        this.ticketID = ticketNumber;
+        this.bookingID = bookingNumber;
     }
 
     public String getMovieTitle() {
@@ -53,11 +53,11 @@ public class Ticket {
         return showEnd;
     }
 
-    public int getTicketNumber() {
-        return ticketNumber;
+    public int getTicketID() {
+        return ticketID;
     }
 
-    public int getBookingNumber() {
-        return bookingNumber;
+    public int getBookingID() {
+        return bookingID;
     }
 }

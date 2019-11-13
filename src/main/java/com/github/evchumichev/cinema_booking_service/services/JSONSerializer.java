@@ -9,7 +9,7 @@ public class JSONSerializer {
     private ObjectMapper objectMapper;
 
     public JSONSerializer() {
-        objectMapper = new ObjectMapper();
+        this.objectMapper = new ObjectMapper();
     }
 
     public String toJSON(List<Object> objects) {
