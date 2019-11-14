@@ -7,15 +7,10 @@ import java.util.Properties;
 public class PropertiesLoader {
     public Properties loadFromFIle(String file) {
         Properties properties = new Properties();
-        try {
-            FileInputStream stream = new FileInputStream(file);
-            try {
-                properties.load(stream);
-            } finally {
-                stream.close();
-            }
+        try(FileInputStream stream = new FileInputStream(file)) {
+            properties.load(stream);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         return properties;
     }

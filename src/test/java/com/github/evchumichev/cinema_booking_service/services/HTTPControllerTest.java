@@ -16,7 +16,7 @@ class HTTPControllerTest {
     public static void initService() {
         new DataBaseMigrator().migrate();
         httpController = new HTTPController();
-        httpController.startApi();
+        httpController.start();
     }
 
     @AfterAll
@@ -25,13 +25,13 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualsCinemaSchema() {
-        given().
-                port(port).
-                when().
-                get("/api/cinema").
-                then().
-                assertThat().body(matchesJsonSchemaInClasspath("cinema-schema.json"));
+    public void shouldEqualCinemaSchema() {
+        given()
+                .port(port)
+                .when()
+                .get("/api/cinema")
+                .then()
+                .assertThat().body(matchesJsonSchemaInClasspath("cinema-schema.json"));
     }
 
     @Test
@@ -47,12 +47,24 @@ class HTTPControllerTest {
 
     @Test
     public void shouldEqualSeatSchema() {
-        given().
-                port(port).
-                param("showID", 1).
-                when().
-                get("/api/seats").
-                then().
-                assertThat().body(matchesJsonSchemaInClasspath("seat-schema.json"));
+        given()
+                .port(port)
+                .param("showID", 1)
+                .when()
+                .get("/api/seats")
+                .then()
+                .assertThat().body(matchesJsonSchemaInClasspath("seat-schema.json"));
+    }
+
+    @Test
+    public void shouldEqualTicketSchema() {
+        given()
+                .port(port)
+                .param("showID", 2)
+                .param("seatID", 2, 4)
+                .when()
+                .post("/api/booking")
+                .then()
+                .assertThat().body(matchesJsonSchemaInClasspath("ticket-schema.json"));
     }
 }

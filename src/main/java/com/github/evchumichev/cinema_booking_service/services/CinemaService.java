@@ -5,22 +5,20 @@ import com.github.evchumichev.cinema_booking_service.domains.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 class CinemaService {
-    private String url;
-    private String user;
-    private String password;
+
+    private ConnectionProvider connectionProvider;
 
     CinemaService() {
-        loadProperties();
+        connectionProvider = new ConnectionProvider();
     }
 
-    public List<Object> getCinemaList() {
-        List<Object> cinemaList = new ArrayList<>();
-        final String query = "select *\n" +
+    public List<Cinema> getCinemaList() {
+        List<Cinema> cinemaList = new ArrayList<>();
+        final String query = "select * " +
                 "from cinema";
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = connectionProvider.getConnect()) {
             try (PreparedStatement statement = connection.prepareCall(query)) {
                 ResultSet resultSet = statement.executeQuery();
                 while (resultSet.next()) {
@@ -28,19 +26,19 @@ class CinemaService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         return cinemaList;
     }
 
-    public List<Object> getShowList(int cinemaID) {
-        List<Object> showList = new ArrayList<>();
-        final String query = "select sh.id, m.title, sh.start_time\n" +
-                "from show sh\n" +
-                "join cinema_hall ch on ch.id = sh.cinema_hall_id\n" +
-                "join movie m on m.id = sh.movie_id\n" +
+    public List<Show> getShowList(int cinemaID) {
+        List<Show> showList = new ArrayList<>();
+        final String query = "select sh.id, m.title, sh.start_time " +
+                "from show sh " +
+                "join cinema_hall ch on ch.id = sh.cinema_hall_id " +
+                "join movie m on m.id = sh.movie_id " +
                 "where ch.cinema_id = ?";
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = connectionProvider.getConnect()) {
             try (PreparedStatement statement = connection.prepareCall(query)) {
                 statement.setInt(1, cinemaID);
                 ResultSet resultSet = statement.executeQuery();
@@ -49,20 +47,20 @@ class CinemaService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         return showList;
     }
 
-    public List<Object> getSeatsList(int showID) {
-        List<Object> seatsList = new ArrayList<>();
-        String query = "select s.id, s.row, s.number, t.seat_id\n" +
-                "from seat s\n" +
-                "left join tickets t on t.seat_id = s.id\n" +
-                "join show sh on sh.cinema_hall_id = s.cinema_hall_id\n" +
-                "where sh.cinema_hall_id = ?\n" +
+    public List<Seat> getSeatsList(int showID) {
+        List<Seat> seatsList = new ArrayList<>();
+        String query = "select s.id, s.row, s.number, t.seat_id " +
+                "from seat s " +
+                "left join tickets t on t.seat_id = s.id " +
+                "join show sh on sh.cinema_hall_id = s.cinema_hall_id " +
+                "where sh.cinema_hall_id = ? " +
                 "order by s.row, s.number";
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = connectionProvider.getConnect()) {
             try (PreparedStatement statement = connection.prepareCall(query)) {
                 statement.setInt(1, showID);
                 ResultSet resultSet = statement.executeQuery();
@@ -78,26 +76,26 @@ class CinemaService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         return seatsList;
     }
 
-    public List<Object> bookTheSeats(int showID, Integer[] seatID) {
+    public List<Ticket> bookTheSeats(int showID, Integer[] seatID) {
         int bookingID = -1;
-        List<Object> tickets = new ArrayList<>();
+        List<Ticket> tickets = new ArrayList<>();
         String firstQuery = "select * from bookTheSeat(?, variadic ?)";
-        String secondQuery = "select m.title as movie_title, c.name as cinema_name, ch.number as cinema_hall_number, s.row as seat_row,\n" +
-                " s.number as seat_number, sh.start_time as show_start_time, sh.end_time as show_end_time, t.id as ticket_id, b.id as booking_id \n" +
-                "                        from booking b \n" +
-                "                        join tickets t on t.booking_id = b.id \n" +
-                "                        join show sh on sh.id = t.show_id \n" +
-                "                        join movie m on m.id = sh.movie_id \n" +
-                "                        join cinema_hall ch on ch.id = sh.cinema_hall_id \n" +
-                "                        join cinema c on c.id = ch.cinema_id \n" +
-                "                        join seat s on s.id = t.seat_id \n" +
+        String secondQuery = "select m.title as movie_title, c.name as cinema_name, ch.number as cinema_hall_number, s.row as seat_row, " +
+                " s.number as seat_number, sh.start_time as show_start_time, sh.end_time as show_end_time, t.id as ticket_id, b.id as booking_id " +
+                "                        from booking b " +
+                "                        join tickets t on t.booking_id = b.id " +
+                "                        join show sh on sh.id = t.show_id " +
+                "                        join movie m on m.id = sh.movie_id " +
+                "                        join cinema_hall ch on ch.id = sh.cinema_hall_id " +
+                "                        join cinema c on c.id = ch.cinema_id " +
+                "                        join seat s on s.id = t.seat_id " +
                 "                where b.id = ?";
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = connectionProvider.getConnect()) {
             try (PreparedStatement statement = connection.prepareCall(firstQuery)) {
                 statement.setInt(1, showID);
                 statement.setArray(2, connection.createArrayOf("integer", seatID));
@@ -105,11 +103,8 @@ class CinemaService {
                 while (resultSet.next()) {
                     bookingID = resultSet.getInt(1);
                 }
+
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
             try (PreparedStatement statement = connection.prepareCall(secondQuery)) {
                 statement.setInt(1, bookingID);
                 ResultSet resultSet = statement.executeQuery();
@@ -121,16 +116,9 @@ class CinemaService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
         return tickets;
-    }
-
-    private void loadProperties() {
-        Properties properties = new PropertiesLoader().loadFromFIle("database.properties");
-        this.url = properties.getProperty("url");
-        this.user = properties.getProperty("user");
-        this.password = properties.getProperty("password");
     }
 
 }

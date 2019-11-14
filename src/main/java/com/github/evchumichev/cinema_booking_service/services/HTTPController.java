@@ -1,5 +1,10 @@
 package com.github.evchumichev.cinema_booking_service.services;
 
+import com.github.evchumichev.cinema_booking_service.domains.Cinema;
+import com.github.evchumichev.cinema_booking_service.domains.Seat;
+import com.github.evchumichev.cinema_booking_service.domains.Show;
+import com.github.evchumichev.cinema_booking_service.domains.Ticket;
+
 import java.util.List;
 
 import static spark.Spark.*;
@@ -13,23 +18,24 @@ public class HTTPController {
         jsonSerializer = new JSONSerializer();
     }
 
-    public void startApi() {
+    public void start() {
         get("/api/cinema", (request, response) -> {
-            List<Object> responseList = cinemaService.getCinemaList();
+            List<Cinema> responseList = cinemaService.getCinemaList();
             return jsonSerializer.toJSON(responseList);
         });
 
         get("/api/show", (request, response) -> {
             int cinemaID = Integer.parseInt(request.queryParams("cinemaID"));
-            List<Object> responseList = cinemaService.getShowList(cinemaID);
+            List<Show> responseList = cinemaService.getShowList(cinemaID);
             return jsonSerializer.toJSON(responseList);
         });
 
         get("/api/seats", (request, response) -> {
             int showID = Integer.parseInt(request.queryParams("showID"));
-            List<Object> responseList = cinemaService.getSeatsList(showID);
+            List<Seat> responseList = cinemaService.getSeatsList(showID);
             return jsonSerializer.toJSON(responseList);
         });
+
 
         post("/api/booking", (request, response) -> {
             int showID = Integer.parseInt(request.queryParams("showID"));
@@ -38,12 +44,12 @@ public class HTTPController {
             for (int i = 0; i < seatIDIntegerArray.length; i++) {
                 seatIDIntegerArray[i] = Integer.parseInt(seatIDStringArray[i]);
             }
-            List<Object> responseList = cinemaService.bookTheSeats(showID, seatIDIntegerArray);
+            List<Ticket> responseList = cinemaService.bookTheSeats(showID, seatIDIntegerArray);
             return jsonSerializer.toJSON(responseList);
         });
     }
 
     public void stop() {
-        Thread.currentThread().interrupt();
+        stop();
     }
 }

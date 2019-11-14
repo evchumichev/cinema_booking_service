@@ -8,13 +8,14 @@ public class DataBaseMigrator {
     private String url;
     private String user;
     private String password;
+    private String schema;
 
     public DataBaseMigrator(){
         loadProperties();
     }
 
     public void migrate() {
-        Flyway flyway = Flyway.configure().dataSource(url, user, password).load();
+        Flyway flyway = Flyway.configure().dataSource(url, user, password).schemas(schema).load();
         flyway.migrate();
     }
 
@@ -24,6 +25,7 @@ public class DataBaseMigrator {
         this.url = properties.getProperty("url");
         this.user = properties.getProperty("user");
         this.password = properties.getProperty("password");
+        this.schema = properties.getProperty("schema");
     }
 
 }

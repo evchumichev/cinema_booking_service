@@ -8,8 +8,7 @@ public class Starter {
 
     public static void main(String[] args) {
         new DataBaseMigrator().migrate();
-        new HTTPController().startApi();
-
+        new HTTPController().start();
     }
 
 }
