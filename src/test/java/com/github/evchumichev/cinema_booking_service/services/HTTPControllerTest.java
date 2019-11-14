@@ -61,7 +61,7 @@ class HTTPControllerTest {
         given()
                 .port(port)
                 .param("showID", 2)
-                .param("seatID", 2, 4)
+                .param("seatID", 6)
                 .when()
                 .post("/api/booking")
                 .then()

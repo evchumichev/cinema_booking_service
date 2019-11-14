@@ -20,7 +20,7 @@ public class DataBaseMigrator {
     }
 
     private void loadProperties() {
-        PropertiesLoader propertiesLoader = new PropertiesLoader();
+        PropertiesLoader propertiesLoader = PropertiesLoader.getInstance();
         Properties properties = propertiesLoader.loadFromFIle("database.properties");
         this.url = properties.getProperty("url");
         this.user = properties.getProperty("user");
