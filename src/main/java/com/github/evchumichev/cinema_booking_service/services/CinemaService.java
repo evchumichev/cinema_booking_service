@@ -18,12 +18,13 @@ class CinemaService {
         List<Cinema> cinemaList = new ArrayList<>();
         final String query = "select * " +
                 "from cinema";
-        try (Connection connection = connectionProvider.getConnect()) {
-            try (PreparedStatement statement = connection.prepareCall(query)) {
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    cinemaList.add(new Cinema(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("city")));
-                }
+        try (Connection connection = connectionProvider.getConnect();
+             PreparedStatement statement = connection.prepareCall(query)) {
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                cinemaList.add(new Cinema(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("city")));
+
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -60,20 +61,20 @@ class CinemaService {
                 "join show sh on sh.cinema_hall_id = s.cinema_hall_id " +
                 "where sh.cinema_hall_id = ? " +
                 "order by s.row, s.number";
-        try (Connection connection = connectionProvider.getConnect()) {
-            try (PreparedStatement statement = connection.prepareCall(query)) {
-                statement.setInt(1, showID);
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    Seat seat = new Seat(resultSet.getInt("id"), resultSet.getString("row"), resultSet.getString("number"));
-                    if (resultSet.getInt("seat_id") != seat.getId()) {
-                        seat.setBookingStatus(BookingStatus.FREE);
-                    }
-                    if (resultSet.getInt("seat_id") == seat.getId()) {
-                        seat.setBookingStatus(BookingStatus.RESERVED);
-                    }
-                    seatsList.add(seat);
+        try (Connection connection = connectionProvider.getConnect();
+             PreparedStatement statement = connection.prepareCall(query)) {
+            statement.setInt(1, showID);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Seat seat = new Seat(resultSet.getInt("id"), resultSet.getString("row"), resultSet.getString("number"));
+                if (resultSet.getInt("seat_id") != seat.getId()) {
+                    seat.setBookingStatus(BookingStatus.FREE);
                 }
+                if (resultSet.getInt("seat_id") == seat.getId()) {
+                    seat.setBookingStatus(BookingStatus.RESERVED);
+                }
+                seatsList.add(seat);
+
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

@@ -23,7 +23,7 @@ public class ConnectionProvider {
     }
 
     private void loadProperties() {
-        Properties properties = PropertiesLoader.getInstance().loadFromFIle("database.properties");
+        Properties properties = ConfigLoader.getInstance().load();
         this.url = properties.getProperty("url");
         this.user = properties.getProperty("user");
         this.password = properties.getProperty("password");

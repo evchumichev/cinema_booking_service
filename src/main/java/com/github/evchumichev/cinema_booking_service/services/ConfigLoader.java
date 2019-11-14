@@ -5,22 +5,24 @@ import java.io.IOException;
 import java.util.Properties;
 
 
-public class PropertiesLoader {
+public class ConfigLoader {
 
-    private static PropertiesLoader propertiesLoader;
+    private static ConfigLoader propertiesLoader;
+    private String filePath;
+    private ConfigLoader() {
+        filePath = "database.properties";
+    }
 
-    private PropertiesLoader() {}
-
-    public static PropertiesLoader getInstance() {
+    public static ConfigLoader getInstance() {
         if (propertiesLoader == null) {
-            propertiesLoader = new PropertiesLoader();
+            propertiesLoader = new ConfigLoader();
         }
         return propertiesLoader;
     }
 
-    public Properties loadFromFIle(String file) {
+    public Properties load() {
         Properties properties = new Properties();
-        try(FileInputStream stream = new FileInputStream(file)) {
+        try(FileInputStream stream = new FileInputStream(filePath)) {
             properties.load(stream);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
