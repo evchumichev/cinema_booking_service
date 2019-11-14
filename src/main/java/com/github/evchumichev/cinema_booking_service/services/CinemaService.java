@@ -26,7 +26,7 @@ class CinemaService {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e);
         }
         return cinemaList;
     }
@@ -47,7 +47,7 @@ class CinemaService {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e);
         }
         return showList;
     }
@@ -76,7 +76,7 @@ class CinemaService {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e);
         }
         return seatsList;
     }
@@ -116,7 +116,7 @@ class CinemaService {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e);
         }
         return tickets;
     }

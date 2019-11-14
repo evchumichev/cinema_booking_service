@@ -14,8 +14,12 @@ public class ConnectionProvider {
         loadProperties();
     }
 
-    public Connection getConnect() throws SQLException {
-        return DriverManager.getConnection(url, user, password);
+    public Connection getConnect() {
+        try {
+            return DriverManager.getConnection(url, user, password);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void loadProperties() {

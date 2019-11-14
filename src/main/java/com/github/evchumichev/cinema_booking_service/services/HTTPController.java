@@ -1,9 +1,7 @@
 package com.github.evchumichev.cinema_booking_service.services;
 
-import com.github.evchumichev.cinema_booking_service.domains.Cinema;
-import com.github.evchumichev.cinema_booking_service.domains.Seat;
-import com.github.evchumichev.cinema_booking_service.domains.Show;
-import com.github.evchumichev.cinema_booking_service.domains.Ticket;
+import com.github.evchumichev.cinema_booking_service.domains.*;
+import com.github.evchumichev.cinema_booking_service.domains.Error;
 
 import java.util.List;
 
@@ -46,6 +44,13 @@ public class HTTPController {
             }
             List<Ticket> responseList = cinemaService.bookTheSeats(showID, seatIDIntegerArray);
             return jsonSerializer.toJSON(responseList);
+        });
+
+        exception(Exception.class, (exception, request, response) -> {
+            String errorMessage = jsonSerializer.toJSON(new Error(exception.getMessage()));
+            response.status(500);
+            response.type("application/json");
+            response.body(errorMessage);
         });
     }
 
