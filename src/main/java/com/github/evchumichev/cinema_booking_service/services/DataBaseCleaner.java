@@ -4,19 +4,19 @@ import org.flywaydb.core.Flyway;
 
 import java.util.Properties;
 
-public class DataBaseMigrator {
+public class DataBaseCleaner {
     private String url;
     private String user;
     private String password;
     private String schema;
 
-    public DataBaseMigrator() {
+    public DataBaseCleaner() {
         loadProperties();
     }
 
-    public void migrate() {
+    public void clean() {
         Flyway flyway = Flyway.configure().dataSource(url, user, password).schemas(schema).load();
-        flyway.migrate();
+        flyway.clean();
     }
 
     private void loadProperties() {
@@ -27,5 +27,4 @@ public class DataBaseMigrator {
         this.password = properties.getProperty("password");
         this.schema = properties.getProperty("schema");
     }
-
 }

@@ -39,14 +39,14 @@ class CinemaService {
                 "join cinema_hall ch on ch.id = sh.cinema_hall_id " +
                 "join movie m on m.id = sh.movie_id " +
                 "where ch.cinema_id = ?";
-        try (Connection connection = connectionProvider.getConnect()) {
-            try (PreparedStatement statement = connection.prepareCall(query)) {
-                statement.setInt(1, cinemaID);
-                ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    showList.add(new Show(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getTimestamp("start_time")));
-                }
+        try (Connection connection = connectionProvider.getConnect();
+             PreparedStatement statement = connection.prepareCall(query)) {
+            statement.setInt(1, cinemaID);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                showList.add(new Show(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getTimestamp("start_time")));
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

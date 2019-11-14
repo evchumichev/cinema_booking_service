@@ -3,9 +3,7 @@ package com.github.evchumichev.cinema_booking_service.services;
 import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.*;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 
 class HTTPControllerTest {
@@ -14,6 +12,7 @@ class HTTPControllerTest {
 
     @BeforeAll
     public static void initService() {
+        new DataBaseCleaner().clean();
         new DataBaseMigrator().migrate();
         httpController = new HTTPController();
         httpController.start();
@@ -56,15 +55,51 @@ class HTTPControllerTest {
                 .assertThat().body(matchesJsonSchemaInClasspath("seat-schema.json"));
     }
 
+    @RepeatedTest(2)
+    public void shouldEqualTicketAndThenErrorSchema(RepetitionInfo repetitionInfo) {
+        if (repetitionInfo.getCurrentRepetition() == 1) {
+            given()
+                    .port(port)
+                    .param("showID", 1)
+                    .param("seatID", 1)
+                    .when()
+                    .post("/api/booking")
+                    .then()
+                    .assertThat().body(matchesJsonSchemaInClasspath("ticket-schema.json"));
+        }
+        if (repetitionInfo.getCurrentRepetition() == 2) {
+            given()
+                    .port(port)
+                    .param("showID", 1)
+                    .param("seatID", 1)
+                    .when()
+                    .post("/api/booking")
+                    .then()
+                    .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
+        }
+    }
+
     @Test
-    public void shouldEqualTicketSchema() {
+    public void shouldBeErrorWrongSeat() {
         given()
                 .port(port)
-                .param("showID", 2)
-                .param("seatID", 6)
+                .param("showID", 1)
+                .param("seatID", 2)
+                .when()
+                .post("/api/booking")
+                .then().body(matchesJsonSchemaInClasspath("error-schema.json"));
+    }
+
+    @Test
+    public void shouldBookingMultipleSeats() {
+        given()
+                .port(port)
+                .param("showID", 1)
+                .param("seatID", 3, 5)
                 .when()
                 .post("/api/booking")
                 .then()
                 .assertThat().body(matchesJsonSchemaInClasspath("ticket-schema.json"));
     }
+
 }
