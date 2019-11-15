@@ -1,1 +1,0 @@
-create unique index if not exists unique_seatID_showID on tickets (seat_id, show_id);

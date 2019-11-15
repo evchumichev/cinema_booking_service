@@ -55,11 +55,12 @@ class CinemaService {
 
     public List<Seat> getSeatsList(int showID) {
         List<Seat> seatsList = new ArrayList<>();
-        String query = "select s.id, s.row, s.number, t.seat_id " +
+        String query = "select * " +
                 "from seat s " +
-                "left join tickets t on t.seat_id = s.id " +
                 "join show sh on sh.cinema_hall_id = s.cinema_hall_id " +
-                "where sh.cinema_hall_id = ? " +
+                "left join tickets t on t.seat_id = s.id " +
+                "and t.show_id = sh.id " +
+                "where sh.id = ?" +
                 "order by s.row, s.number";
         try (Connection connection = connectionProvider.getConnect();
              PreparedStatement statement = connection.prepareCall(query)) {
@@ -67,10 +68,9 @@ class CinemaService {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Seat seat = new Seat(resultSet.getInt("id"), resultSet.getString("row"), resultSet.getString("number"));
-                if (resultSet.getInt("seat_id") != seat.getId()) {
+                if (resultSet.getInt("seat_id") == 0) {
                     seat.setBookingStatus(BookingStatus.FREE);
-                }
-                if (resultSet.getInt("seat_id") == seat.getId()) {
+                } else {
                     seat.setBookingStatus(BookingStatus.RESERVED);
                 }
                 seatsList.add(seat);

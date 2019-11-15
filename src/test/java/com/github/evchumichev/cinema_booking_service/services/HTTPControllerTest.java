@@ -18,11 +18,6 @@ class HTTPControllerTest {
         httpController.start();
     }
 
-    @AfterAll
-    public static void stopService() {
-        httpController.stop();
-    }
-
     @Test
     public void shouldEqualCinemaSchema() {
         given()
