@@ -62,7 +62,7 @@ class HTTPControllerTest {
                 .when()
                 .get("/api/show")
                 .then()
-                .statusCode(500)
+                .statusCode(400)
                 .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 
@@ -98,7 +98,7 @@ class HTTPControllerTest {
                 .when()
                 .get("/api/seats")
                 .then()
-                .statusCode(500)
+                .statusCode(400)
                 .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 
@@ -123,7 +123,7 @@ class HTTPControllerTest {
                     .when()
                     .post("/api/booking")
                     .then()
-                    .statusCode(500)
+                    .statusCode(400)
                     .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
         }
     }
@@ -137,7 +137,7 @@ class HTTPControllerTest {
                 .when()
                 .post("/api/booking")
                 .then()
-                .statusCode(500)
+                .statusCode(400)
                 .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 
@@ -161,7 +161,7 @@ class HTTPControllerTest {
                 .when()
                 .post("/api/booking")
                 .then()
-                .statusCode(500)
+                .statusCode(400)
                 .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 
@@ -173,7 +173,7 @@ class HTTPControllerTest {
                 .when()
                 .post("/api/booking")
                 .then()
-                .statusCode(500)
+                .statusCode(400)
                 .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 
@@ -185,9 +185,8 @@ class HTTPControllerTest {
                 .when()
                 .post("/api/booking")
                 .then()
-                .statusCode(500)
+                .statusCode(400)
                 .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
-
 
 }

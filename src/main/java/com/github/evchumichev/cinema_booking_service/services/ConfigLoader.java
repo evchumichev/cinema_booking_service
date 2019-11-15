@@ -1,32 +1,34 @@
 package com.github.evchumichev.cinema_booking_service.services;
 
+import com.github.evchumichev.cinema_booking_service.services.configuration.Config;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-
 public class ConfigLoader {
 
-    private static ConfigLoader propertiesLoader;
-    private String filePath;
+    private static ConfigLoader configLoader;
+    private Config config;
+
     private ConfigLoader() {
-        filePath = "database.properties";
+        Properties properties = new Properties();
+        try (FileInputStream stream = new FileInputStream("database.properties")) {
+            properties.load(stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        config = new Config(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"), properties.getProperty("schema"));
     }
 
     public static ConfigLoader getInstance() {
-        if (propertiesLoader == null) {
-            propertiesLoader = new ConfigLoader();
+        if (configLoader == null) {
+            configLoader = new ConfigLoader();
         }
-        return propertiesLoader;
+        return configLoader;
     }
 
-    public Properties load() {
-        Properties properties = new Properties();
-        try(FileInputStream stream = new FileInputStream(filePath)) {
-            properties.load(stream);
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        return properties;
+    public Config load() {
+        return config;
     }
 }

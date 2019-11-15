@@ -46,13 +46,9 @@ public class HTTPController {
             return jsonSerializer.toJSON(responseList);
         });
 
-        get("/api/test", (request, response) -> {
-            return new Error("Zhenya bog scaly");
-        });
-
         exception(Exception.class, (exception, request, response) -> {
             String errorMessage = jsonSerializer.toJSON(new Error(exception.getMessage()));
-            response.status(500);
+            response.status(400);
             response.type("application/json");
             response.body(errorMessage);
         });
