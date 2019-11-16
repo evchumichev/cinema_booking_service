@@ -42,6 +42,18 @@ class HTTPControllerTest {
     }
 
     @Test
+    public void shouldExceptionGetShowStringParamValue() {
+        given()
+                .port(port)
+                .param("cinemaID", "someString")
+                .when()
+                .get("/api/show")
+                .then()
+                .statusCode(400)
+                .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
+    }
+
+    @Test
     public void shouldExceptionGetShowIncorrectParamValue() {
         given()
                 .port(port)
@@ -99,30 +111,27 @@ class HTTPControllerTest {
                 .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 
-    @RepeatedTest(2)
-    public void shouldOKPostBookingThenExceptionReservedSeat(RepetitionInfo repetitionInfo) {
-        if (repetitionInfo.getCurrentRepetition() == 1) {
-            given()
-                    .port(port)
-                    .param("showID", 1)
-                    .param("seatID", 1)
-                    .when()
-                    .post("/api/booking")
-                    .then()
-                    .statusCode(200)
-                    .assertThat().body(matchesJsonSchemaInClasspath("ticket-schema.json"));
-        }
-        if (repetitionInfo.getCurrentRepetition() == 2) {
-            given()
-                    .port(port)
-                    .param("showID", 1)
-                    .param("seatID", 1)
-                    .when()
-                    .post("/api/booking")
-                    .then()
-                    .statusCode(400)
-                    .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
-        }
+    @Test
+    public void shouldOKPostBookingThenExceptionReservedSeat() {
+        given()
+                .port(port)
+                .param("showID", 1)
+                .param("seatID", 1)
+                .when()
+                .post("/api/booking")
+                .then()
+                .statusCode(200)
+                .assertThat().body(matchesJsonSchemaInClasspath("ticket-schema.json"));
+
+        given()
+                .port(port)
+                .param("showID", 1)
+                .param("seatID", 1)
+                .when()
+                .post("/api/booking")
+                .then()
+                .statusCode(400)
+                .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 
     @Test
@@ -183,6 +192,43 @@ class HTTPControllerTest {
                 .post("/api/booking")
                 .then()
                 .statusCode(400)
+                .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
+    }
+
+    @Test
+    public void shouldExceptionPostBookingStringParamShowID() {
+        given()
+                .port(port)
+                .param("showID", "someString")
+                .param("seatID", 2, 4, 6)
+                .when()
+                .post("/api/booking")
+                .then()
+                .statusCode(400)
+                .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
+    }
+
+    @Test
+    public void shouldExceptionPostBookingStringParamSeatID() {
+        given()
+                .port(port)
+                .param("showID", 3)
+                .param("seatID", "someString")
+                .when()
+                .post("/api/booking")
+                .then()
+                .statusCode(400)
+                .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
+    }
+
+    @Test
+    public void shouldInvalidURL() {
+        given()
+                .port(port)
+                .when()
+                .get("/api/something")
+                .then()
+                .statusCode(404)
                 .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 

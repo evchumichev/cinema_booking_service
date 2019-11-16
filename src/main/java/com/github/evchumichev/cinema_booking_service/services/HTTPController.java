@@ -2,7 +2,6 @@ package com.github.evchumichev.cinema_booking_service.services;
 
 import com.github.evchumichev.cinema_booking_service.domains.*;
 import com.github.evchumichev.cinema_booking_service.domains.Error;
-import com.github.evchumichev.cinema_booking_service.services.exceptions.RequestNotFoundException;
 import com.github.evchumichev.cinema_booking_service.services.exceptions.WrongRequestParamsException;
 
 import java.util.List;
@@ -27,10 +26,12 @@ public class HTTPController {
         });
 
         get("/api/show", (request, response) -> {
-            if (request.queryParams("cinemaID") == null) {
-                throw new WrongRequestParamsException("Invalid request parameters!");
+            int cinemaID = 0;
+            try {
+                cinemaID = Integer.parseInt(request.queryParams("cinemaID"));
+            } catch (NumberFormatException e) {
+                throw new WrongRequestParamsException("Invalid request parameters!" + e.getMessage(), e);
             }
-            int cinemaID = Integer.parseInt(request.queryParams("cinemaID"));
             List<Show> responseList = cinemaDAO.getShowList(cinemaID);
             if (responseList.isEmpty()) {
                 throw new WrongRequestParamsException("Invalid request parameters!");
@@ -39,10 +40,12 @@ public class HTTPController {
         });
 
         get("/api/seats", (request, response) -> {
-            if (request.queryParams("showID") == null) {
-                throw new WrongRequestParamsException("Invalid request parameters!");
+            int showID = 0;
+            try {
+                showID = Integer.parseInt(request.queryParams("showID"));
+            } catch (NumberFormatException e) {
+                throw new WrongRequestParamsException("Invalid request parameters!" + e.getMessage(), e);
             }
-            int showID = Integer.parseInt(request.queryParams("showID"));
             List<Seat> responseList = cinemaDAO.getSeatsList(showID);
             if (responseList.isEmpty()) {
                 throw new WrongRequestParamsException("Invalid request parameters!");
@@ -52,14 +55,17 @@ public class HTTPController {
 
 
         post("/api/booking", (request, response) -> {
-            if (request.queryParams("showID") == null || request.queryParams("seatID") == null) {
-                throw new WrongRequestParamsException("Invalid request parameters!");
-            }
-            int showID = Integer.parseInt(request.queryParams("showID"));
-            String[] seatIDStringArray = request.queryParams("seatID").split(",");
-            Integer[] seatIDIntegerArray = new Integer[seatIDStringArray.length];
-            for (int i = 0; i < seatIDIntegerArray.length; i++) {
-                seatIDIntegerArray[i] = Integer.parseInt(seatIDStringArray[i]);
+            int showID = 0;
+            Integer[] seatIDIntegerArray = null;
+            try {
+                showID = Integer.parseInt(request.queryParams("showID"));
+                String[] seatIDStringArray = request.queryParams("seatID").split(",");
+                seatIDIntegerArray = new Integer[seatIDStringArray.length];
+                for (int i = 0; i < seatIDIntegerArray.length; i++) {
+                    seatIDIntegerArray[i] = Integer.parseInt(seatIDStringArray[i]);
+                }
+            } catch (NumberFormatException | NullPointerException e) {
+                throw new WrongRequestParamsException("Invalid request parameters!" + e.getMessage(), e);
             }
             List<Ticket> responseList = cinemaDAO.bookTheSeats(showID, seatIDIntegerArray);
             if (responseList.isEmpty()) {
@@ -68,9 +74,9 @@ public class HTTPController {
             return jsonSerializer.toJSON(responseList);
         });
 
-        notFound((request, response) -> {
-            throw new RequestNotFoundException("Invalid request url!");
-        });
+        notFound((request, response) -> "{\n" +
+                "    \"message\": \"Invalid URL 404!\"\n" +
+                "}");
 
         exception(Exception.class, (exception, request, response) -> {
             response.status(responseStatusStorage.getResponseCode(exception));
