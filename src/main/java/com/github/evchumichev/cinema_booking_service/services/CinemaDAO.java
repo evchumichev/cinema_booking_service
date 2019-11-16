@@ -28,7 +28,6 @@ class CinemaDAO {
                 cinemaList.add(new Cinema(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("city")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new UnexpectedLogicException(e);
         }
         return cinemaList;
@@ -49,7 +48,6 @@ class CinemaDAO {
                 showList.add(new Show(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getTimestamp("start_time")));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new UnexpectedLogicException(e);
         }
         return showList;
@@ -78,7 +76,6 @@ class CinemaDAO {
                 seatsList.add(seat);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new UnexpectedLogicException(e);
         }
         return seatsList;
@@ -118,10 +115,8 @@ class CinemaDAO {
                 }
             }
         } catch (PSQLException e) {
-            e.printStackTrace();
             throw new BookingParametersException(e);
         } catch (SQLException e) {
-            System.out.println(e.getClass().getName());
             throw new UnexpectedLogicException(e);
         }
         return tickets;
