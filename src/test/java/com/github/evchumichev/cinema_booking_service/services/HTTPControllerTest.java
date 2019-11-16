@@ -2,7 +2,6 @@ package com.github.evchumichev.cinema_booking_service.services;
 
 import static io.restassured.RestAssured.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.*;
-import static org.hamcrest.Matchers.*;
 
 import org.junit.jupiter.api.*;
 
@@ -20,7 +19,7 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualCinemaSchemaWhenGetCinemaList() {
+    public void shouldOKGetCinema() {
         given()
                 .port(port)
                 .when()
@@ -31,7 +30,7 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualShowSchemaWhenCorrectParamValue() {
+    public void shouldOKGetShowCorrectParamValue() {
         given()
                 .port(port)
                 .param("cinemaID", 1)
@@ -43,20 +42,19 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualShowSchemaButEmptyWhenIncorrectParamValue() {
+    public void shouldExceptionGetShowIncorrectParamValue() {
         given()
                 .port(port)
                 .param("cinemaID", 23)
                 .when()
                 .get("/api/show")
                 .then()
-                .body(equalTo("[]"))
-                .statusCode(200)
-                .assertThat().body(matchesJsonSchemaInClasspath("ticket-schema.json"));
+                .statusCode(400)
+                .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 
     @Test
-    public void shouldEqualErrorSchemaWhenEmptyParamValueCinemaID() {
+    public void shouldExceptionGetShowEmptyParamCinemaID() {
         given()
                 .port(port)
                 .when()
@@ -67,7 +65,7 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualSeatSchemaWhenCorrectParamValue() {
+    public void shouldOKGetSeatsCorrectParamValue() {
         given()
                 .port(port)
                 .param("showID", 1)
@@ -79,20 +77,19 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualSeatSchemaButEmptyWhenIncorrectParamValue() {
+    public void shouldExceptionGetSeatsIncorrectParamValue() {
         given()
                 .port(port)
                 .param("showID", 10)
                 .when()
                 .get("/api/seats")
                 .then()
-                .statusCode(200)
-                .body(equalTo("[]"))
-                .assertThat().body(matchesJsonSchemaInClasspath("seat-schema.json"));
+                .statusCode(400)
+                .assertThat().body(matchesJsonSchemaInClasspath("error-schema.json"));
     }
 
     @Test
-    public void shouldEqualErrorSchemaWhenNoParamValueShowID() {
+    public void shouldExceptionGetSeatsNoParamShowID() {
         given()
                 .port(port)
                 .when()
@@ -103,7 +100,7 @@ class HTTPControllerTest {
     }
 
     @RepeatedTest(2)
-    public void shouldEqualTicketWhenBookingFreeSeatAndThenErrorSchemaWhenBookReservedSeat(RepetitionInfo repetitionInfo) {
+    public void shouldOKPostBookingThenExceptionReservedSeat(RepetitionInfo repetitionInfo) {
         if (repetitionInfo.getCurrentRepetition() == 1) {
             given()
                     .port(port)
@@ -129,7 +126,7 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualErrorSchemaWhenBookingWrongRelationShowCinemaHallAndSeat() {
+    public void shouldExceptionPostBookingWrongSeatShowCombination() {
         given()
                 .port(port)
                 .param("showID", 1)
@@ -142,7 +139,7 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualsTicketSchemaWhenBookingMultipleSeats() {
+    public void shouldOKPostBookingMultipleSeats() {
         given()
                 .port(port)
                 .param("showID", 3)
@@ -155,7 +152,7 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualsErrorSchemaWhenBookingMultipleSeatsNoParamValuesShowIDSeatID() {
+    public void shouldExceptionPostBookingNoParams() {
         given()
                 .port(port)
                 .when()
@@ -166,7 +163,7 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualsErrorSchemaWhenBookingMultipleSeatsNoParamValuesShowID() {
+    public void shouldExceptionPostBookingNoParamShowID() {
         given()
                 .port(port)
                 .param("seatID", 7)
@@ -178,7 +175,7 @@ class HTTPControllerTest {
     }
 
     @Test
-    public void shouldEqualsErrorSchemaWhenBookingMultipleSeatsNoParamValuesSeatID() {
+    public void shouldExceptionPostBookingNoParamSeatID() {
         given()
                 .port(port)
                 .param("showID", 1)

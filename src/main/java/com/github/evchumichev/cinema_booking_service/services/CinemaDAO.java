@@ -1,16 +1,19 @@
 package com.github.evchumichev.cinema_booking_service.services;
 
 import com.github.evchumichev.cinema_booking_service.domains.*;
+import com.github.evchumichev.cinema_booking_service.services.exceptions.BookingParametersException;
+import com.github.evchumichev.cinema_booking_service.services.exceptions.UnexpectedLogicException;
+import org.postgresql.util.PSQLException;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-class CinemaService {
+class CinemaDAO {
 
     private ConnectionProvider connectionProvider;
 
-    CinemaService() {
+    CinemaDAO() {
         connectionProvider = new ConnectionProvider();
     }
 
@@ -20,14 +23,13 @@ class CinemaService {
                 "from cinema";
         try (Connection connection = connectionProvider.getConnect();
              PreparedStatement statement = connection.prepareCall(query)) {
-
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 cinemaList.add(new Cinema(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getString("city")));
-
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new UnexpectedLogicException(e);
         }
         return cinemaList;
     }
@@ -46,9 +48,9 @@ class CinemaService {
             while (resultSet.next()) {
                 showList.add(new Show(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getTimestamp("start_time")));
             }
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new UnexpectedLogicException(e);
         }
         return showList;
     }
@@ -74,10 +76,10 @@ class CinemaService {
                     seat.setBookingStatus(BookingStatus.RESERVED);
                 }
                 seatsList.add(seat);
-
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new UnexpectedLogicException(e);
         }
         return seatsList;
     }
@@ -104,7 +106,6 @@ class CinemaService {
                 while (resultSet.next()) {
                     bookingID = resultSet.getInt(1);
                 }
-
             }
             try (PreparedStatement statement = connection.prepareCall(secondQuery)) {
                 statement.setInt(1, bookingID);
@@ -116,8 +117,12 @@ class CinemaService {
                             resultSet.getTimestamp("show_end_time"), resultSet.getInt("ticket_id"), resultSet.getInt("booking_id")));
                 }
             }
+        } catch (PSQLException e) {
+            e.printStackTrace();
+            throw new BookingParametersException(e);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getClass().getName());
+            throw new UnexpectedLogicException(e);
         }
         return tickets;
     }

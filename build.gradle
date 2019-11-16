@@ -1,11 +1,17 @@
-plugins {
-    id 'java'
-}
-
 group 'com.github.evchumichev.cinema_booking_service'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
 
 repositories {
     mavenCentral()
@@ -21,4 +27,14 @@ dependencies {
     compile group: 'io.rest-assured', name: 'json-schema-validator', version: '4.1.2'
     testCompile 'org.junit.jupiter:junit-jupiter-api:5.2.0'
     testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
+    compile group: 'com.google.guava', name: 'guava', version: '28.1-jre'
+}
+
+shadowJar {
+    mergeServiceFiles()
+    manifest {
+        attributes(
+                'Main-Class': 'com.github.evchumichev.cinema_booking_service.Starter',
+        )
+    }
 }
