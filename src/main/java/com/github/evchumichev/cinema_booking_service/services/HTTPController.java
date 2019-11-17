@@ -30,7 +30,7 @@ public class HTTPController {
             try {
                 cinemaID = Integer.parseInt(request.queryParams("cinemaID"));
             } catch (NumberFormatException e) {
-                throw new WrongRequestParamsException("Invalid request parameters!" + e.getMessage(), e);
+                throw new WrongRequestParamsException("Invalid request parameters! " + e.getMessage(), e);
             }
             List<Show> responseList = cinemaDAO.getShowList(cinemaID);
             if (responseList.isEmpty()) {
@@ -44,7 +44,7 @@ public class HTTPController {
             try {
                 showID = Integer.parseInt(request.queryParams("showID"));
             } catch (NumberFormatException e) {
-                throw new WrongRequestParamsException("Invalid request parameters!" + e.getMessage(), e);
+                throw new WrongRequestParamsException("Invalid request parameters! " + e.getMessage(), e);
             }
             List<Seat> responseList = cinemaDAO.getSeatsList(showID);
             if (responseList.isEmpty()) {
@@ -65,7 +65,7 @@ public class HTTPController {
                     seatIDIntegerArray[i] = Integer.parseInt(seatIDStringArray[i]);
                 }
             } catch (NumberFormatException | NullPointerException e) {
-                throw new WrongRequestParamsException("Invalid request parameters!" + e.getMessage(), e);
+                throw new WrongRequestParamsException("Invalid request parameters! " + e.getMessage(), e);
             }
             List<Ticket> responseList = cinemaDAO.bookTheSeats(showID, seatIDIntegerArray);
             if (responseList.isEmpty()) {

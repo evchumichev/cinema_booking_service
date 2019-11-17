@@ -4,6 +4,7 @@ import com.github.evchumichev.cinema_booking_service.services.configuration.Conf
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigLoader {
@@ -13,7 +14,7 @@ public class ConfigLoader {
 
     private ConfigLoader() {
         Properties properties = new Properties();
-        try (FileInputStream stream = new FileInputStream("database.properties")) {
+        try (InputStream stream = ConfigLoader.class.getClassLoader().getResourceAsStream("database.properties")) {
             properties.load(stream);
         } catch (IOException e) {
             throw new RuntimeException(e);
