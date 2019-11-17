@@ -21,7 +21,7 @@ POST request `/api/booking` has two parameters: `?showID=` and array of seats `?
 In any other case, JSON will contain an error message.
 
 ### Testing
-Before test cases, the database will automatically clear to just migrated state. 
+Before test cases, the database will automatically clean to just migrated state. 
 
 ### Build with
 * [Spark framework](http://sparkjava.com) - A micro framework for creating web applications
