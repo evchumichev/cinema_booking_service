@@ -17,6 +17,5 @@ public class DataBaseCleaner {
 
     private void loadProperties() {
         ConfigLoader configLoader = ConfigLoader.getInstance();
-
     }
 }

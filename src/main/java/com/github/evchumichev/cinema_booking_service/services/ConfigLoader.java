@@ -2,7 +2,6 @@ package com.github.evchumichev.cinema_booking_service.services;
 
 import com.github.evchumichev.cinema_booking_service.services.configuration.Config;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
